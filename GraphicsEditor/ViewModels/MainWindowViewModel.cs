@@ -64,13 +64,6 @@ namespace GraphicsEditor.ViewModels
             {
                 mainWindow.SaveFileDialogMenu(param);
             });
-            Avalonia.Controls.Shapes.Rectangle rect = new Avalonia.Controls.Shapes.Rectangle();
-            rect.Fill = new SolidColorBrush(Avalonia.Media.Color.Parse("Red"));
-            rect.Width = 100;
-            rect.Height = 100;
-            canv.Children.Add(rect);
-            //MouseDragElementBehavior dragBehavior = new MouseDragElementBehavior();
-            //dragBehavior.Attach(rect);
         }
 
         public void LoadShapes(string path)
