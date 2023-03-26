@@ -1,0 +1,93 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:GraphicsEditor.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		MinWidth="1000" MinHeight="500"
+		Name="mainWindow"
+        x:Class="GraphicsEditor.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="GraphicsEditor">
+	
+	<Window.Styles>
+		<Style Selector="Button.b1">
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Bottom"/>
+			<Setter Property="Background" Value="MintCream"/>
+			<Setter Property="BorderBrush" Value="CadetBlue"/>
+			
+		</Style>
+		<Style Selector="Button.b2">
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Background" Value="MintCream"/>
+		</Style>
+		<Style Selector="Image.h1">
+			<Setter Property="Width" Value="28"/>
+			<Setter Property="Height" Value="28"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
+		<Style Selector="TextBlock">
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="TextAlignment" Value="Left"/>
+			<Setter Property="Margin" Value="10,0,0,0"/>
+		</Style>
+	</Window.Styles>
+	<DockPanel>
+		<Menu DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1">
+			<MenuItem Name="menuExport" Header="Экспортировать">
+				<MenuItem Header="Экспортировать в PNG" Command="{Binding ExportButton}" CommandParameter="png"/>
+				<MenuItem Header="Экспортировать в JSON" Command="{Binding ExportButton}" CommandParameter="json"/>
+				<MenuItem Header="Экспортировать в XML" Command="{Binding ExportButton}" CommandParameter="xml"/>
+			</MenuItem>
+			<MenuItem Name="menuImport" Header="Импортировать">
+				<!--<MenuItem Header="Импортировать в PNG" Command="{Binding ImportButton}" CommandParameter="png"/>-->
+				<MenuItem Header="Импортировать в JSON" Command="{Binding ImportButton}" CommandParameter="json"/>
+				<MenuItem Header="Импортировать в XML" Command="{Binding ImportButton}" CommandParameter="xml"/>
+			</MenuItem>
+		</Menu>
+		<Grid ColumnDefinitions="0.7*,*,0.7*">
+			<Border Grid.Column="0" BorderBrush="Gray" BorderThickness="1">
+				<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*,*">
+					<ComboBox Grid.Row="0" Grid.ColumnSpan="2" SelectedIndex="{Binding SelectedShapeIndex}" HorizontalAlignment="Stretch" Name="comboBoxShape" >
+						<ComboBoxItem Content="Прямая линия"/>
+						<ComboBoxItem Content="Ломаная линия"/>
+						<ComboBoxItem Content="Многоугольник"/>
+						<ComboBoxItem Content="Прямоугольник"/>
+						<ComboBoxItem Content="Эллипс"/>
+						<ComboBoxItem Content="Составная фигура"/>
+					</ComboBox>
+					
+					<ContentControl Grid.Row="1" Grid.ColumnSpan="2" Content="{Binding ShapeContent}" MinWidth="300" MinHeight="100"/>
+					
+					<Button Name="buttonAdd" Classes="b1" Grid.Row="2" Grid.Column="0" ZIndex="100"
+							Content="Добавить" Command="{Binding AddButton}"/>
+					<Button Name="buttonClear" Classes="b1" Grid.Row="2" Grid.Column="1" ZIndex="100"
+							Content="Сброс" Command="{Binding ClearButton}"/>
+				</Grid>
+			</Border>
+			<Canvas Name="canvas" Grid.Column="1" DragDrop.AllowDrop="True" Background="AliceBlue" MinWidth="400" MinHeight="420">
+				
+			</Canvas>
+			<ListBox Name="listBoxShapes" Grid.Column="2" Background="MintCream" BorderBrush="CadetBlue" BorderThickness="1"
+					Items="{Binding ShapeList}" SelectedItem="{Binding SelectedEntity}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid ColumnDefinitions="*,*">
+							<TextBlock Grid.Column="0" Text="{Binding Name}"/>
+							<Button Name="buttonDeleteShape" Classes="b2" Grid.Column="1" Background="PaleTurquoise" 
+									Command="{Binding #mainWindow.DataContext.DeleteButton}" CommandParameter="{Binding }">
+								<Image Classes="h1" Source="/Assets/delete.png"/>
+							</Button>
+						</Grid>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</Grid>
+	</DockPanel>
+</Window>
