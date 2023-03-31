@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
+using DynamicData;
 using GraphicsEditor.Models.Shapes;
 using ReactiveUI;
 using System;
@@ -52,6 +53,15 @@ namespace GraphicsEditor.Models
             shapesCollection.Remove(shape);
 
         }
-        
+        public ShapeEntity AfterMoveChange(string name, double x, double y)
+        {
+            var itemShape = shapesCollection.First(p => p.Name==name);
+            var index = shapesCollection.IndexOf(itemShape);
+            var itemList = shapeList.ElementAt(index);
+            var new_shape= itemList.Change(shapesCollection.ElementAt(index), x, y);
+            shapesCollection[index]= new_shape;
+            return itemList;
+        }
+
     }
 }

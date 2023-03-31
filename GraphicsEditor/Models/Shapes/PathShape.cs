@@ -60,5 +60,13 @@ namespace GraphicsEditor.Models.Shapes
             main.ShapeCommandPath = this.CommandPath;
             main.ShapeFillColor = this.FillColor;
         }
+
+        public override Shape Change(Shape changedShape, double x, double y)
+        {
+            Path newShape = changedShape as Path;
+            Geometry gem = Geometry.Parse(this.CommandPath);
+            
+            return newShape;
+        }
     }
 }

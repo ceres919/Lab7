@@ -64,6 +64,7 @@ namespace GraphicsEditor.ViewModels
             {
                 mainWindow.SaveFileDialogMenu(param);
             });
+            Avalonia.Controls.Shapes.Rectangle rect = new Avalonia.Controls.Shapes.Rectangle();
         }
 
         public void LoadShapes(string path)

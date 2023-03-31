@@ -75,5 +75,22 @@ namespace GraphicsEditor.Models.Shapes
             main.ShapePoints = this.Points;
             main.ShapeFillColor = this.FillColor;
         }
+
+        public override Shape Change(Shape changedShape, double x, double y)
+        {
+            Polygon newShape = changedShape as Polygon;
+            Points points = newShape.Points as Points;
+            Points newPoints = new Points();
+            string str = "";
+
+            foreach (var point in points)
+            {
+                newPoints.Add(new(point.X + x, point.Y + y));
+                str += point.ToString() + " ";
+            }
+            this.Points = str;
+            newShape.Points = newPoints;
+            return newShape;
+        }
     }
 }

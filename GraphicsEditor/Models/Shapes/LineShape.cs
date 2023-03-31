@@ -57,5 +57,16 @@ namespace GraphicsEditor.Models.Shapes
             main.ShapeStartPoint = this.StartPoint;
             main.ShapeEndPoint = this.EndPoint;
         }
+        public override Shape Change(Shape changedShape, double x, double y)
+        {
+            var startPoint = PointsParse(this.StartPoint);
+            var endPoint = PointsParse(this.EndPoint);
+            this.StartPoint = $"{startPoint[0] + x},{startPoint[1] + y}";
+            this.EndPoint = $"{endPoint[0] + x},{endPoint[1] + y}";
+            Line newShape = changedShape as Line;
+            newShape.StartPoint = new Point(startPoint[0] + x, startPoint[1] + y);
+            newShape.EndPoint = new Point(endPoint[0] + x, endPoint[1] + y);
+            return newShape;
+        }
     }
 }

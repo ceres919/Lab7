@@ -11,6 +11,8 @@ using ReactiveUI;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reflection.Metadata;
+using System.Xml.Linq;
 
 namespace GraphicsEditor.Views
 {
@@ -19,6 +21,8 @@ namespace GraphicsEditor.Views
         protected bool isDragging;
         private Point clickPosition;
         private TranslateTransform originTT;
+        private TranslateTransform changedPoints;
+        private TransformGroup trGpoup;
         public MainWindow()
         {
             InitializeComponent();
@@ -124,38 +128,88 @@ namespace GraphicsEditor.Views
         }
         public void CanvasDrop(object sender, DragEventArgs dragEventArgs)
         {
-            List<string> imagePath = (List<string>)dragEventArgs.Data.Get(DataFormats.FileNames);
-            Image img = new Image();
-            img.Source = new Bitmap(imagePath.ElementAt(0));
-            canvas.Children.Add(img);
+            List<string> path = (List<string>)dragEventArgs.Data.Get(DataFormats.FileNames);
+            if (DataContext is MainWindowViewModel dataContext)
+            {
+                if (path != null)
+                {
+                    dataContext.LoadShapes(path.ElementAt(0));
+                }
+            }
+            //Image img = new Image();
+            //img.Source = new Bitmap(imagePath.ElementAt(0));
+            //canvas.Children.Add(img);
         }
         public void ShapePointerEnter(object sender,  PointerEventArgs pointerEventArgs)
         {
-            var draggableControl = pointerEventArgs.Device.Captured as Shape;
-            if (draggableControl == null)
+            
+            var draggableControl = pointerEventArgs.Pointer.Captured as Shape;
+            if (draggableControl == null )
             {
                 return;
             }
-            originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
-            isDragging = true;
-            clickPosition = pointerEventArgs.GetPosition(this);
+            if (pointerEventArgs.GetCurrentPoint(this).Properties.IsLeftButtonPressed && pointerEventArgs.Source.InteractiveParent is Canvas)
+            {
+                originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
+                changedPoints = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
+                trGpoup = draggableControl.RenderTransform as TransformGroup ?? new TransformGroup();
+                isDragging = true;
+                clickPosition = pointerEventArgs.GetPosition(canvas);
+                if (DataContext is MainWindowViewModel dataContext)
+                {
+                    var item = dataContext.list.AfterMoveChange(draggableControl.Name, 0, 0);
+                    dataContext.CurrentShapeContent(item);
+                }
+            }
+            
         }
         public void ShapeMovedEvent(object sender, PointerEventArgs pointerEventArgs)
         {
-            var draggableControl = pointerEventArgs.Device.Captured as Shape;
+            var draggableControl = pointerEventArgs.Pointer.Captured as Shape;
             if (isDragging && draggableControl != null)
             {
-                Point currentPosition = pointerEventArgs.GetPosition(this);
+                draggableControl.RenderTransform = null;
+                Point currentPosition = pointerEventArgs.GetPosition(canvas);
                 var transform = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 transform.X = originTT.X + (currentPosition.X - clickPosition.X);
+                changedPoints.X = transform.X;
                 transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
-                draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
+                changedPoints.Y = transform.Y;
+
+                if (trGpoup.Children.Count > 0)
+                {
+                    TransformGroup newGroup = new TransformGroup();
+                    newGroup.Children.Add(new TranslateTransform(transform.X, transform.Y));
+                    foreach (var item in trGpoup.Children)
+                    {
+                        newGroup.Children.Add(item);
+                    }
+                    draggableControl.RenderTransform = newGroup;
+                }
+                else
+                {
+                    draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
+                }
             }
         }
         public void ShapeReleasedEvent(object sender, PointerEventArgs pointerEventArgs)
         {
-            var draggableControl = pointerEventArgs.Device.Captured as Shape;
             isDragging = false;
+            var draggableControl = pointerEventArgs.Pointer.Captured as Shape;
+            
+            if (draggableControl != null)
+            {
+                if (DataContext is MainWindowViewModel dataContext)
+                {
+                    draggableControl.RenderTransform = null;
+                    if (trGpoup.Children.Count > 0)
+                    {
+                        draggableControl.RenderTransform = trGpoup;
+                    }
+                    var item = dataContext.list.AfterMoveChange(draggableControl.Name, changedPoints.X, changedPoints.Y);
+                    dataContext.CurrentShapeContent(item); 
+                }
+            }
         }
     }
 }

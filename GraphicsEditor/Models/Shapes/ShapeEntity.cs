@@ -43,6 +43,7 @@ namespace GraphicsEditor.Models.Shapes
 
         public abstract Shape AddThisShape();
         public abstract ShapeEntity AddToList(ShapeCreator cr);
+        public abstract Shape Change(Shape changedShape, double x, double y);
         public virtual void SetPropertiesOfCurrentShape(MainWindowViewModel main)
         {
             main.ShapeName = this.Name;

@@ -62,5 +62,14 @@ namespace GraphicsEditor.Models.Shapes
             main.ShapeWidth = this.Width;
             main.ShapeFillColor = this.FillColor;
         }
+
+        public override Shape Change(Shape changedShape, double x, double y)
+        {
+            var startPoint = PointsParse(this.StartPoint);
+            this.StartPoint = $"{startPoint[0] + x},{startPoint[1] + y}";
+            Ellipse newShape = changedShape as Ellipse;
+            newShape.Margin = new(startPoint[0] + x, startPoint[1] + y, 0, 0);
+            return newShape;
+        }
     }
 }

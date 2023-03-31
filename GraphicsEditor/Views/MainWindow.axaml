@@ -52,6 +52,7 @@
 			</MenuItem>
 		</Menu>
 		<Grid ColumnDefinitions="0.7*,*,0.7*">
+			
 			<Border Grid.Column="0" BorderBrush="Gray" BorderThickness="1">
 				<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*,*">
 					<ComboBox Grid.Row="0" Grid.ColumnSpan="2" SelectedIndex="{Binding SelectedShapeIndex}" HorizontalAlignment="Stretch" Name="comboBoxShape" >
@@ -71,7 +72,7 @@
 							Content="Сброс" Command="{Binding ClearButton}"/>
 				</Grid>
 			</Border>
-			<Canvas Name="canvas" Grid.Column="1" DragDrop.AllowDrop="True" Background="AliceBlue" MinWidth="400" MinHeight="420">
+			<Canvas Name="canvas" Grid.Column="1" DragDrop.AllowDrop="True" ClipToBounds="True" Background="AliceBlue" MinWidth="400" MinHeight="420">
 				
 			</Canvas>
 			<ListBox Name="listBoxShapes" Grid.Column="2" Background="MintCream" BorderBrush="CadetBlue" BorderThickness="1"

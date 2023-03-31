@@ -70,5 +70,22 @@ namespace GraphicsEditor.Models.Shapes
             base.SetPropertiesOfCurrentShape(main);
             main.ShapePoints = this.Points;
         }
+
+        public override Shape Change(Shape changedShape, double x, double y)
+        {
+            Polyline newShape = changedShape as Polyline;
+            Points points = newShape.Points as Points;
+            Points newPoints = new Points();
+            string str ="";
+
+            foreach(var point in points)
+            {
+               newPoints.Add(new(point.X+x, point.Y+y));
+               str += point.ToString()+" ";
+            }
+            this.Points = str;
+            newShape.Points = newPoints;
+            return newShape;
+        }
     }
 }
