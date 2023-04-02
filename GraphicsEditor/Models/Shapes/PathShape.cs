@@ -65,7 +65,8 @@ namespace GraphicsEditor.Models.Shapes
         {
             Path newShape = changedShape as Path;
             Geometry gem = Geometry.Parse(this.CommandPath);
-            
+            gem.Transform = new TranslateTransform(x, y);
+            newShape.Data = gem;
             return newShape;
         }
     }

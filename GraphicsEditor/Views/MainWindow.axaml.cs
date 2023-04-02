@@ -155,11 +155,11 @@ namespace GraphicsEditor.Views
                 trGpoup = draggableControl.RenderTransform as TransformGroup ?? new TransformGroup();
                 isDragging = true;
                 clickPosition = pointerEventArgs.GetPosition(canvas);
-                if (DataContext is MainWindowViewModel dataContext)
-                {
-                    var item = dataContext.list.AfterMoveChange(draggableControl.Name, 0, 0);
-                    dataContext.CurrentShapeContent(item);
-                }
+                //if (DataContext is MainWindowViewModel dataContext)
+                //{
+                //    var item = dataContext.list.AfterMoveChange(draggableControl.Name, 0, 0);
+                //    dataContext.CurrentShapeContent(item);
+                //}
             }
             
         }

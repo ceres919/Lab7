@@ -74,15 +74,17 @@ namespace GraphicsEditor.Models.Shapes
         public override Shape Change(Shape changedShape, double x, double y)
         {
             Polyline newShape = changedShape as Polyline;
-            Points points = newShape.Points as Points;
+            Points points = GroupOfPointsParse(this.Points);
             Points newPoints = new Points();
             string str ="";
 
             foreach(var point in points)
             {
-               newPoints.Add(new(point.X+x, point.Y+y));
-               str += point.ToString()+" ";
+                Point s = new Point(point.X + x, point.Y + y);
+                newPoints.Add(s);
+                str += $"{s.X},{s.Y} ";
             }
+            str = str.TrimEnd(' ');
             this.Points = str;
             newShape.Points = newPoints;
             return newShape;
