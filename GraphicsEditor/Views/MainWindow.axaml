@@ -3,12 +3,22 @@
         xmlns:vm="using:GraphicsEditor.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:models="clr-namespace:GraphicsEditor.Models.Shapes"
+		xmlns:conv="clr-namespace:GraphicsEditor.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		MinWidth="1000" MinHeight="500"
 		Name="mainWindow"
         x:Class="GraphicsEditor.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="GraphicsEditor">
+
+	<Window.Resources>
+		<conv:ColorToBrushConverter x:Key="colorToBrushConverter"/>
+		<conv:StringToPointConverter x:Key="stringToPointConverter"/>
+		<conv:StringToPointsConverter x:Key="stringToPointsConverter"/>
+		<conv:StringToGeometryConverter x:Key="stringToGeometryConverter"/>
+
+	</Window.Resources>
 	
 	<Window.Styles>
 		<Style Selector="Button.b1">
@@ -37,6 +47,7 @@
 			<Setter Property="TextAlignment" Value="Left"/>
 			<Setter Property="Margin" Value="10,0,0,0"/>
 		</Style>
+		
 	</Window.Styles>
 	<DockPanel>
 		<Menu DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1">
@@ -46,7 +57,6 @@
 				<MenuItem Header="Экспортировать в XML" Command="{Binding ExportButton}" CommandParameter="xml"/>
 			</MenuItem>
 			<MenuItem Name="menuImport" Header="Импортировать">
-				<!--<MenuItem Header="Импортировать в PNG" Command="{Binding ImportButton}" CommandParameter="png"/>-->
 				<MenuItem Header="Импортировать в JSON" Command="{Binding ImportButton}" CommandParameter="json"/>
 				<MenuItem Header="Импортировать в XML" Command="{Binding ImportButton}" CommandParameter="xml"/>
 			</MenuItem>
@@ -72,9 +82,165 @@
 							Content="Сброс" Command="{Binding ClearButton}"/>
 				</Grid>
 			</Border>
-			<Canvas Name="canvas" Grid.Column="1" DragDrop.AllowDrop="True" ClipToBounds="True" Background="AliceBlue" MinWidth="400" MinHeight="420">
-				
-			</Canvas>
+			
+			<ItemsControl Grid.Column="1" Items="{Binding ShapeList}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<Canvas Name="canvas" ClipToBounds="True" DragDrop.AllowDrop="True" Background="White"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.DataTemplates>
+					<DataTemplate DataType="{x:Type	models:LineShape}">
+						<Line Name="{Binding Name}"
+							  StartPoint="{Binding StartPoint, Converter={StaticResource stringToPointConverter}}"
+							  EndPoint="{Binding EndPoint, Converter={StaticResource stringToPointConverter}}"
+							  Stroke="{Binding StrokeColor, Converter={StaticResource colorToBrushConverter}}"
+							  StrokeThickness="{Binding StrokeThickness}">
+							<Line.RenderTransform>
+								<TransformGroup>
+									<RotateTransform
+										Angle="{Binding Angle}"
+										CenterX="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										CenterY="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<ScaleTransform
+										ScaleX="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										ScaleY="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<SkewTransform
+										AngleX="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										AngleY="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+								</TransformGroup>
+							</Line.RenderTransform>
+						</Line>
+					</DataTemplate>
+
+					<DataTemplate DataType="{x:Type	models:PolyLineShape}">
+						<Polyline Name="{Binding Name}"
+							  Points="{Binding LotPoints, Converter={StaticResource stringToPointsConverter}}"
+							  Stroke="{Binding StrokeColor}"
+							  StrokeThickness="{Binding StrokeThickness}">
+							<Polyline.RenderTransform>
+								<TransformGroup>
+									<RotateTransform
+										Angle="{Binding Angle}"
+										CenterX="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										CenterY="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<ScaleTransform
+										ScaleX="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										ScaleY="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<SkewTransform
+										AngleX="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										AngleY="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+								</TransformGroup>
+							</Polyline.RenderTransform>
+						</Polyline>
+					</DataTemplate>
+
+					<DataTemplate DataType="{x:Type	models:PolygonShape}">
+						<Polygon Name="{Binding Name}" 
+							  Points="{Binding LotPoints, Converter={StaticResource stringToPointsConverter}}"
+							  Stroke="{Binding StrokeColor}"
+							  StrokeThickness="{Binding StrokeThickness}"
+							  Fill="{Binding FillColor}">
+							<Polygon.RenderTransform>
+								<TransformGroup>
+									<RotateTransform
+										Angle="{Binding Angle}"
+										CenterX="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										CenterY="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<ScaleTransform
+										ScaleX="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										ScaleY="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<SkewTransform
+										AngleX="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										AngleY="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+								</TransformGroup>
+							</Polygon.RenderTransform>
+						</Polygon>
+					</DataTemplate>
+
+					<DataTemplate DataType="{x:Type	models:EllipseShape}">
+						<Ellipse Name="{Binding Name}"
+								 Height="{Binding Height}"
+								 Width="{Binding Width}"
+								 Fill="{Binding FillColor}"
+								 Stroke="{Binding StrokeColor}"
+								 StrokeThickness="{Binding StrokeThickness}">
+							<Ellipse.RenderTransform>
+								<TransformGroup>
+									<RotateTransform
+										Angle="{Binding Angle}"
+										CenterX="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										CenterY="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<ScaleTransform
+										ScaleX="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										ScaleY="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<SkewTransform
+										AngleX="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										AngleY="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<TranslateTransform
+										X="{Binding StartPoint, Converter={StaticResource stringToPointConverter},ConverterParameter='x'}"
+										Y="{Binding StartPoint, Converter={StaticResource stringToPointConverter},ConverterParameter='y'}"/>
+								</TransformGroup>
+							</Ellipse.RenderTransform>
+						</Ellipse>
+					</DataTemplate>
+
+					<DataTemplate DataType="{x:Type	models:RectangleShape}">
+						<Rectangle Name="{Binding Name}"
+								   Height="{Binding Height}"
+								   Width="{Binding Width}"
+								   Fill="{Binding FillColor}"
+								   Stroke="{Binding StrokeColor}"
+								   StrokeThickness="{Binding StrokeThickness}">
+							<Rectangle.RenderTransform>
+								<TransformGroup>
+									<RotateTransform
+										Angle="{Binding Angle}"
+										CenterX="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										CenterY="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<ScaleTransform
+										ScaleX="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										ScaleY="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<SkewTransform
+										AngleX="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										AngleY="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<TranslateTransform
+										X="{Binding StartPoint, Converter={StaticResource stringToPointConverter},ConverterParameter='x'}"
+										Y="{Binding StartPoint, Converter={StaticResource stringToPointConverter},ConverterParameter='y'}"/>
+								</TransformGroup>
+							</Rectangle.RenderTransform>
+						</Rectangle>
+					</DataTemplate>
+
+					<DataTemplate DataType="{x:Type	models:PathShape}">
+						<Path Name="{Binding Name}"
+							  Data="{Binding CommandPath, Converter={StaticResource stringToGeometryConverter}}"
+							  Fill="{Binding FillColor}"
+							  Stroke="{Binding StrokeColor}"
+							  StrokeThickness="{Binding StrokeThickness}">
+							<Path.RenderTransform>
+								<TransformGroup>
+									<RotateTransform
+										Angle="{Binding Angle}"
+										CenterX="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										CenterY="{Binding AngleCenter, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<ScaleTransform
+										ScaleX="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										ScaleY="{Binding ScaleTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<SkewTransform
+										AngleX="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='x'}"
+										AngleY="{Binding SkewTransform, Converter={StaticResource stringToPointConverter}, ConverterParameter='y'}"/>
+									<TranslateTransform
+										X="{Binding StartPoint, Converter={StaticResource stringToPointConverter},ConverterParameter='x'}"
+										Y="{Binding StartPoint, Converter={StaticResource stringToPointConverter},ConverterParameter='y'}"/>
+								</TransformGroup>
+							</Path.RenderTransform>
+						</Path>
+					</DataTemplate>
+
+				</ItemsControl.DataTemplates>
+			</ItemsControl>
+			
 			<ListBox Name="listBoxShapes" Grid.Column="2" Background="MintCream" BorderBrush="CadetBlue" BorderThickness="1"
 					Items="{Binding ShapeList}" SelectedItem="{Binding SelectedEntity}">
 				<ListBox.ItemTemplate>

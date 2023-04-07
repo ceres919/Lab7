@@ -1,11 +1,5 @@
-﻿using Avalonia.Controls;
-using GraphicsEditor.Models.Shapes;
-using System;
-using System.Collections.Generic;
+﻿using GraphicsEditor.Models.Shapes;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraphicsEditor.Models.LoadAndSave
 {

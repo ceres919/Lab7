@@ -28,7 +28,7 @@
 		<TextBox Name="textBoxEnd" Text="{Binding ShapeEndPoint}" Grid.Column="1" Grid.Row="2"/>
 
 		<TextBlock Text="Цвет линии:" Grid.Column="0" Grid.Row="3"/>
-		<ComboBox Name="comboBoxColor" Items="{Binding Colors}" SelectedItem="{Binding ShapeStrokeColor}"
+		<ComboBox Name="comboBoxColor" Items="{Binding ColoredBrush}" SelectedItem="{Binding ShapeStrokeColor}"
 				   Grid.Column="1" Grid.Row="3">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>

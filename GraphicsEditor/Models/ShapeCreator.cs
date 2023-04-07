@@ -1,19 +1,13 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
-using GraphicsEditor.Models.Shapes;
+﻿using GraphicsEditor.Models.Shapes;
 using GraphicsEditor.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraphicsEditor.Models
 {
     public class ShapeCreator
     {
-        public readonly ObservableCollection<ShapeEntity> shapes = new()
+        private readonly ObservableCollection<ShapeEntity> shapesClasses = new()
         {
             new LineShape(),
             new PolyLineShape(),
@@ -22,60 +16,30 @@ namespace GraphicsEditor.Models
             new EllipseShape(),
             new PathShape()
         };
-        public string shapeName;
-        public string? shapeStartPoint;
-        public string? shapeEndPoint;
-        public string? shapePoints;
-        public double shapeWidth;
-        public double shapeHeight;
-        public string shapeStrokeColor;
-        public string? shapeFillColor;
-        public double shapeStrokeThickness;
-        public string? shapeCommandPath;
-        public double shapeAngle;
-        public string? shapeAngleCenter;
-        public string? shapeScaleTransform;
-        public string? shapeSkewTransform;
+        private MainWindowViewModel viewModel;
 
         public ShapeCreator() { }
         public ShapeCreator(MainWindowViewModel main) 
         {
-            shapeName = main.ShapeName;
-            shapeStartPoint = main.ShapeStartPoint;
-            shapeEndPoint = main.ShapeEndPoint;
-            shapePoints = main.ShapePoints;
-            shapeWidth = main.ShapeWidth;
-            shapeHeight = main.ShapeHeight;
-            shapeStrokeColor = main.ShapeStrokeColor;
-            shapeFillColor = main.ShapeFillColor;
-            shapeStrokeThickness = main.ShapeStrokeThickness;
-            shapeCommandPath = main.ShapeCommandPath;
-            shapeAngle = main.ShapeAngle;
-            shapeAngleCenter = main.ShapeAngleCenter;
-            shapeScaleTransform = main.ShapeScaleTransform;
-            shapeSkewTransform = main.ShapeSkewTransform;
+            viewModel = main;
         }
-        public void Create(int index, ShapesCollection list, Canvas canvas) 
+
+        public void Create(int index, ShapesCollection list) 
         {
-            if (shapeName == null) return;
-            ShapeEntity newItem = shapes.ElementAt(index).AddToList(this);
+            if (viewModel.ShapeName == null) return;
+            ShapeEntity newItem = shapesClasses.ElementAt(index).AddToList(viewModel);
             if (newItem == null) return;
-            Shape newShape = newItem.AddThisShape();
-            //Shape? newShape = shapes.ElementAt(index).AddThisShape(this);
-            //if (newShape == null) return;
-            //ShapeEntity newItem = shapes.ElementAt(index).AddToList(this);
-            list.AddItem(newItem, newShape, canvas);
+            list.AddItem(newItem);
         }
-        public void Load(ShapeEntity listItem, ShapesCollection list, Canvas canvas)
+        public static void Load(ShapeEntity listItem, ShapesCollection list)
         {
-            Shape newShape = listItem.AddThisShape();
-            list.AddItem(listItem, newShape, canvas);
+            list.AddItem(listItem);
         }
         public int ListIndexOfCurrentShape(ShapeEntity item)
         {
             var curType = item.GetType();
-            var typedItem = shapes.First(p=> p.GetType() == curType);
-            var index = shapes.IndexOf(typedItem);
+            var typedItem = shapesClasses.First(p=> p.GetType() == curType);
+            var index = shapesClasses.IndexOf(typedItem);
             return index;
         }
     }

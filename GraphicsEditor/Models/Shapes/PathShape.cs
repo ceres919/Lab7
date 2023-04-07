@@ -1,73 +1,39 @@
-﻿using Avalonia.Controls.Shapes;
-using Avalonia.Media;
-using GraphicsEditor.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using GraphicsEditor.ViewModels;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace GraphicsEditor.Models.Shapes
 {
     public class PathShape : ShapeEntity 
     {
+        private string startPoint;
+        public string StartPoint { get => startPoint; set => SetAndRaise(ref startPoint, value); }
         public string FillColor { get; set; }
         public string CommandPath { get; set; }
         public PathShape() { }
-        public PathShape(ShapeCreator cr) : base(cr.shapeName, cr.shapeStrokeColor, cr.shapeStrokeThickness, cr.shapeAngle, cr.shapeAngleCenter, cr.shapeScaleTransform, cr.shapeSkewTransform)
+        public PathShape(MainWindowViewModel cr) : base(cr.ShapeName, cr.ShapeStrokeColor, cr.ShapeStrokeThickness, cr.ShapeAngle, cr.ShapeAngleCenter, cr.ShapeScaleTransform, cr.ShapeSkewTransform)
         {
-            FillColor = cr.shapeFillColor;
-            CommandPath = cr.shapeCommandPath;
+            StartPoint = cr.ShapeStartPoint;
+            FillColor = cr.ShapeFillColor.Color.ToString();
+            CommandPath = cr.ShapeCommandPath;
         }
 
-        public override PathShape AddToList(ShapeCreator cr)
+        public override PathShape AddToList(MainWindowViewModel cr)
         {
-            if (cr.shapeCommandPath == null)
+            if (cr.ShapeCommandPath == null)
                 return null;
             return new PathShape(cr);
-        }
-        public override Shape AddThisShape()
-        {
-            Geometry gem;
-            try
-            {
-                gem = Geometry.Parse(this.CommandPath);
-            }
-            catch
-            {
-                return null;
-            }
-            //if (gem == null) return null;
-            TransformGroup transformation = new TransformGroup();
-            if (this.Angle != 0 || this.AngleCenter != "" || this.ScaleTransform != "" || this.SkewTransform != "")
-                transformation = ShapeTransformationSetter(this.Angle, this.AngleCenter, this.ScaleTransform, this.SkewTransform);
-
-            return new Path
-            {
-                Name = this.Name,
-                Data = gem,
-                Stroke = new SolidColorBrush(Color.Parse(this.StrokeColor)),
-                StrokeThickness = this.StrokeThickness,
-                Fill = new SolidColorBrush(Color.Parse(this.FillColor)),
-                RenderTransform = transformation
-            };
         }
         public override void SetPropertiesOfCurrentShape(MainWindowViewModel main)
         {
             base.SetPropertiesOfCurrentShape(main);
+            main.ShapeStartPoint = this.StartPoint;
             main.ShapeCommandPath = this.CommandPath;
-            main.ShapeFillColor = this.FillColor;
+            main.ShapeFillColor = main.ColoredBrush.First(p => p.Color == Avalonia.Media.Color.Parse(this.FillColor));
         }
 
-        public override Shape Change(Shape changedShape, double x, double y)
+        public override void Change(double x, double y)
         {
-            Path newShape = changedShape as Path;
-            Geometry gem = Geometry.Parse(this.CommandPath);
-            gem.Transform = new TranslateTransform(x, y);
-            newShape.Data = gem;
-            return newShape;
+            this.StartPoint = $"{x},{y}";
         }
     }
 }

@@ -1,55 +1,29 @@
-﻿using Avalonia;
-using Avalonia.Controls.Shapes;
-using Avalonia.Media;
-using GraphicsEditor.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using GraphicsEditor.ViewModels;
 
 namespace GraphicsEditor.Models.Shapes
 {
     
     public class LineShape : ShapeEntity
     {
-        public string StartPoint { get; set; }
 
-        public string EndPoint { get; set; }
+        private string startPoint;
+        private string endPoint;
+
+        public string StartPoint { get => startPoint; set => SetAndRaise(ref startPoint, value); }
+
+        public string EndPoint { get => endPoint; set => SetAndRaise(ref endPoint, value); }
         public LineShape() { }
-        public LineShape(ShapeCreator cr) : base(cr.shapeName, cr.shapeStrokeColor, cr.shapeStrokeThickness, cr.shapeAngle, cr.shapeAngleCenter, cr.shapeScaleTransform, cr.shapeSkewTransform)
+        public LineShape(MainWindowViewModel cr) : base(cr.ShapeName, cr.ShapeStrokeColor, cr.ShapeStrokeThickness, cr.ShapeAngle, cr.ShapeAngleCenter, cr.ShapeScaleTransform, cr.ShapeSkewTransform)
         {
-            StartPoint = cr.shapeStartPoint;
-            EndPoint = cr.shapeEndPoint;
+            StartPoint = cr.ShapeStartPoint;
+            EndPoint = cr.ShapeEndPoint;
         }
-
-        public override LineShape AddToList(ShapeCreator cr)
+         
+        public override LineShape AddToList(MainWindowViewModel cr)
         {
-            if (cr.shapeStartPoint == null || cr.shapeEndPoint == null)
+            if (cr.ShapeStartPoint == null || cr.ShapeEndPoint == null)
                 return null;
             return new LineShape(cr);
-        }
-        public override Shape AddThisShape()
-        {
-            var startPoint = PointsParse(this.StartPoint);
-            var endPoint = PointsParse(this.EndPoint);
-            if (startPoint == null || endPoint == null) 
-                return null;
-            TransformGroup transformation = new TransformGroup();
-            if (this.Angle != 0 || this.AngleCenter != "" || this.ScaleTransform != "" || this.SkewTransform != "")
-                transformation = ShapeTransformationSetter(this.Angle, this.AngleCenter, this.ScaleTransform, this.SkewTransform);
-
-            return new Line
-            {
-                Name = this.Name,
-                StartPoint = new Point(startPoint[0], startPoint[1]),
-                EndPoint = new Point(endPoint[0], endPoint[1]),
-                Stroke = new SolidColorBrush(Color.Parse(this.StrokeColor)),
-                StrokeThickness = this.StrokeThickness,
-                RenderTransform = transformation
-            };
         }
         public override void SetPropertiesOfCurrentShape(MainWindowViewModel main)
         {
@@ -57,16 +31,13 @@ namespace GraphicsEditor.Models.Shapes
             main.ShapeStartPoint = this.StartPoint;
             main.ShapeEndPoint = this.EndPoint;
         }
-        public override Shape Change(Shape changedShape, double x, double y)
+
+        public override void Change(double x, double y)
         {
             var startPoint = PointsParse(this.StartPoint);
             var endPoint = PointsParse(this.EndPoint);
             this.StartPoint = $"{startPoint[0] + x},{startPoint[1] + y}";
             this.EndPoint = $"{endPoint[0] + x},{endPoint[1] + y}";
-            Line newShape = changedShape as Line;
-            newShape.StartPoint = new Point(startPoint[0] + x, startPoint[1] + y);
-            newShape.EndPoint = new Point(endPoint[0] + x, endPoint[1] + y);
-            return newShape;
         }
     }
 }

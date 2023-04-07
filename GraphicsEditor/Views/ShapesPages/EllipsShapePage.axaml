@@ -31,7 +31,7 @@
 		<TextBox Name="textBoxHeight" Text="{Binding ShapeHeight}" Grid.Column="1" Grid.Row="3"/>
 
 		<TextBlock Text="Цвет линии:" Grid.Column="0" Grid.Row="4"/>
-		<ComboBox Name="comboBoxColor" Items="{Binding Colors}" SelectedItem="{Binding ShapeStrokeColor}"
+		<ComboBox Name="comboBoxColor" Items="{Binding ColoredBrush}" SelectedItem="{Binding ShapeStrokeColor}"
 				  SelectedIndex="0" Grid.Column="1" Grid.Row="4">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
@@ -45,7 +45,7 @@
 					   Value="{Binding ShapeStrokeThickness}" Grid.Column="1" Grid.Row="5"/>
 
 		<TextBlock Text="Цвет заливки:" Grid.Column="0" Grid.Row="6"/>
-		<ComboBox Name="comboBoxFillColor" Items="{Binding Colors}" SelectedItem="{Binding ShapeFillColor}"
+		<ComboBox Name="comboBoxFillColor" Items="{Binding ColoredBrush}" SelectedItem="{Binding ShapeFillColor}"
 				  SelectedIndex="0" Grid.Column="1" Grid.Row="6">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>

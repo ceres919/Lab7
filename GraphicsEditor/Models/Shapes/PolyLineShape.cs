@@ -1,49 +1,24 @@
 ﻿using Avalonia;
-using Avalonia.Controls.Shapes;
-using Avalonia.Media;
 using GraphicsEditor.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace GraphicsEditor.Models.Shapes
 {
     public class PolyLineShape : ShapeEntity
     {
-        public string Points { get; set; }
+        private string lotPoints;
+        public string LotPoints { get => lotPoints; set => SetAndRaise(ref lotPoints, value); }
         public PolyLineShape() { }
-        public PolyLineShape(ShapeCreator cr) : base(cr.shapeName, cr.shapeStrokeColor, cr.shapeStrokeThickness, cr.shapeAngle, cr.shapeAngleCenter, cr.shapeScaleTransform, cr.shapeSkewTransform)
+        public PolyLineShape(MainWindowViewModel cr) : base(cr.ShapeName, cr.ShapeStrokeColor, cr.ShapeStrokeThickness, cr.ShapeAngle, cr.ShapeAngleCenter, cr.ShapeScaleTransform, cr.ShapeSkewTransform)
         {
-            Points = cr.shapePoints;
+            LotPoints = cr.ShapePoints;
         }
 
-        public override PolyLineShape AddToList(ShapeCreator cr)
+        public override PolyLineShape AddToList(MainWindowViewModel cr)
         {
-            if (cr.shapePoints == null) 
+            if (cr.ShapePoints == null) 
                 return null;
             return new PolyLineShape(cr);
-        }
-        public override Shape AddThisShape()
-        {
-            Points? points = GroupOfPointsParse(this.Points);
-            if (points == null) return null;
-            TransformGroup transformation = new TransformGroup();
-            if (this.Angle != 0 || this.AngleCenter != "" || this.ScaleTransform != "" || this.SkewTransform != "")
-                transformation = ShapeTransformationSetter(this.Angle, this.AngleCenter, this.ScaleTransform, this.SkewTransform);
-
-            return new Polyline
-            {
-                Name = this.Name,
-                Points = points,
-                Stroke = new SolidColorBrush(Color.Parse(this.StrokeColor)),
-                StrokeThickness = this.StrokeThickness,
-                RenderTransform = transformation
-            };
         }
         public Points GroupOfPointsParse(string str)
         {
@@ -68,26 +43,23 @@ namespace GraphicsEditor.Models.Shapes
         public override void SetPropertiesOfCurrentShape(MainWindowViewModel main)
         {
             base.SetPropertiesOfCurrentShape(main);
-            main.ShapePoints = this.Points;
+            main.ShapePoints = this.LotPoints;
         }
 
-        public override Shape Change(Shape changedShape, double x, double y)
+        public override void Change(double x, double y)
         {
-            Polyline newShape = changedShape as Polyline;
-            Points points = GroupOfPointsParse(this.Points);
+            Points points = GroupOfPointsParse(this.LotPoints);
             Points newPoints = new Points();
-            string str ="";
+            string str = "";
 
-            foreach(var point in points)
+            foreach (var point in points)
             {
                 Point s = new Point(point.X + x, point.Y + y);
                 newPoints.Add(s);
                 str += $"{s.X},{s.Y} ";
             }
             str = str.TrimEnd(' ');
-            this.Points = str;
-            newShape.Points = newPoints;
-            return newShape;
+            this.LotPoints = str;
         }
     }
 }

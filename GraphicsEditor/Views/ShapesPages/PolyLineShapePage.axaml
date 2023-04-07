@@ -25,7 +25,7 @@
 		<TextBox Name="textBoxPoints" Text="{Binding ShapePoints}" Grid.Column="1" Grid.Row="1"/>
 
 		<TextBlock Text="Цвет линии:" Grid.Column="0" Grid.Row="2"/>
-		<ComboBox Name="comboBoxColor" Items="{Binding Colors}" SelectedItem="{Binding ShapeStrokeColor}"
+		<ComboBox Name="comboBoxColor" Items="{Binding ColoredBrush}" SelectedItem="{Binding ShapeStrokeColor}"
 				  SelectedIndex="0" Grid.Column="1" Grid.Row="2">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>

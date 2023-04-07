@@ -1,14 +1,7 @@
-﻿using Avalonia.Controls.Shapes;
-using GraphicsEditor.Models.Shapes;
-using Newtonsoft.Json;
-using System;
+﻿using GraphicsEditor.Models.Shapes;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace GraphicsEditor.Models.LoadAndSave
 {

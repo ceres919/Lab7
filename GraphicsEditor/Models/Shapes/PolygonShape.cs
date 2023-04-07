@@ -1,53 +1,27 @@
 ﻿using Avalonia;
-using Avalonia.Controls.Shapes;
-using Avalonia.Media;
 using GraphicsEditor.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace GraphicsEditor.Models.Shapes
 {
     public class PolygonShape : ShapeEntity
     {
-        public string Points { get; set; }
+        private string lotPoints;
+        public string LotPoints { get => lotPoints; set => SetAndRaise(ref lotPoints, value); }
         public string FillColor { get; set; }
         public PolygonShape() { }
-        public PolygonShape(ShapeCreator cr) : base(cr.shapeName, cr.shapeStrokeColor, cr.shapeStrokeThickness, cr.shapeAngle, cr.shapeAngleCenter, cr.shapeScaleTransform, cr.shapeSkewTransform)
+        public PolygonShape(MainWindowViewModel cr) : base(cr.ShapeName, cr.ShapeStrokeColor, cr.ShapeStrokeThickness, cr.ShapeAngle, cr.ShapeAngleCenter, cr.ShapeScaleTransform, cr.ShapeSkewTransform)
         {
-            Points = cr.shapePoints;
-            FillColor = cr.shapeFillColor;
+            LotPoints = cr.ShapePoints;
+            FillColor = cr.ShapeFillColor.Color.ToString();
         }
 
-        public override PolygonShape AddToList(ShapeCreator cr)
+        public override PolygonShape AddToList(MainWindowViewModel cr)
         {
-            if (cr.shapePoints == null) 
+            if (cr.ShapePoints == null) 
                 return null;
             return new PolygonShape(cr);
-        }
-        public override Shape AddThisShape()
-        {
-            Points? points = GroupOfPointsParse(this.Points);
-            if (points == null) 
-                return null;
-            TransformGroup transformation = new TransformGroup();
-            if (this.Angle != 0 || this.AngleCenter != "" || this.ScaleTransform != "" || this.SkewTransform != "")
-                transformation = ShapeTransformationSetter(this.Angle, this.AngleCenter, this.ScaleTransform, this.SkewTransform);
-
-            return new Polygon
-            {
-                Name = this.Name,
-                Points = points,
-                Stroke = new SolidColorBrush(Color.Parse(this.StrokeColor)),
-                StrokeThickness = this.StrokeThickness,
-                Fill = new SolidColorBrush(Color.Parse(this.FillColor)),
-                RenderTransform = transformation
-            };
         }
         public Points GroupOfPointsParse(string str)
         {
@@ -72,14 +46,12 @@ namespace GraphicsEditor.Models.Shapes
         public override void SetPropertiesOfCurrentShape(MainWindowViewModel main)
         {
             base.SetPropertiesOfCurrentShape(main);
-            main.ShapePoints = this.Points;
-            main.ShapeFillColor = this.FillColor;
+            main.ShapePoints = this.LotPoints;
+            main.ShapeFillColor = main.ColoredBrush.First(p => p.Color == Avalonia.Media.Color.Parse(this.FillColor));
         }
-
-        public override Shape Change(Shape changedShape, double x, double y)
+        public override void Change(double x, double y)
         {
-            Polygon newShape = changedShape as Polygon;
-            Points points = GroupOfPointsParse(this.Points);
+            Points points = GroupOfPointsParse(this.LotPoints);
             Points newPoints = new Points();
             string str = "";
 
@@ -90,9 +62,7 @@ namespace GraphicsEditor.Models.Shapes
                 str += $"{s.X},{s.Y} ";
             }
             str = str.TrimEnd(' ');
-            this.Points = str;
-            newShape.Points = newPoints;
-            return newShape;
+            this.LotPoints = str;
         }
     }
 }
